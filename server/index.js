@@ -2,7 +2,7 @@
 const express = require('express');
 const SpotifyWebApi = require("spotify-web-api-node")
 const PORT = 3001;
-const cors = require("cors")
+const cors = require("cors")  
 const bodyParser = require('body-parser')
 
 const app = express();
@@ -42,9 +42,9 @@ app.post('/login', (req,res) =>{
   const code = req.body.code
   // var code = 'MQCbtKe23z7YzzS44KzZzZgjQa621hgSzHN';
   const spotifyApi = new SpotifyWebApi({
+    clientId:"1b5b553697174e23a83cd38b903f97ff",
+    clientSecret: "ec43a6477b4b4a989e4bcf32c428352e",
      redirectUri:"http://localhost:3000",
-     clientId:"1b5b553697174e23a83cd38b903f97ff",
-     clientSecret: "ec43a6477b4b4a989e4bcf32c428352e",
   })
 
   spotifyApi
