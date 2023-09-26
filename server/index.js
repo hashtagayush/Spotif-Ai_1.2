@@ -31,7 +31,7 @@ app.post("/refresh", (req, res) => {
       })
     })
     .catch(err => {
-      console.log(err)
+      // console.log(err)
       res.sendStatus(401)
     })
 })
@@ -58,12 +58,29 @@ app.post('/login', (req,res) =>{
         // refreshToken: data.body['refresh_token'],
         // expiresIn: data.body['expires_in'],
       })
-
-  console.log('request sent back')
   }).catch(err =>{
-    console.log(err)
+    // console.log(err)
     res.sendStatus(400)
   }) 
 })
 
+app.post('/features', (req,res) =>{
+  console.log("req recieved for features");
+  const id = req.body.id;
+  const accessToken = req.body.accessToken
+  const refreshToken = req.body.refreshToken
+  
+  const spotifyApi = new SpotifyWebApi({})
+  spotifyApi.setAccessToken(accessToken)
+  spotifyApi.setRefreshToken(refreshToken)
+
+  spotifyApi
+    .getAudioFeaturesForTrack(id)
+    .then(data => {
+      // console.log(data.body);
+      res.json(data)
+    }).catch(err =>{
+      console.log(err)
+    }) 
+})
 app.listen(PORT, ()=>{console.log(`server started at port ${PORT}`)});

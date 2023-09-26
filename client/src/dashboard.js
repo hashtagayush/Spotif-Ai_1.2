@@ -1,10 +1,10 @@
 import React,{useState, useEffect} from 'react'
 import useAuth  from "./useAuth"
-// import axios from "axios"
+import axios from "axios"
 import TrackSearchResult from "./TrackSearchResult"
 import { Container, Form } from "react-bootstrap"
 import SpotifyWApi from "spotify-web-api-node"
-
+import { recommendation } from './recommendation'
 const spotifyApi = new SpotifyWApi({
   clientId: "8b945ef10ea24755b83ac50cede405a0",
 })
@@ -13,28 +13,25 @@ export default function Dashboard({code}) {
   const accessToken = useAuth(code);
   const [search, setSearch] = useState("")
   const [searchResults, setSearchResults] = useState([])
-  const [playingTrack, setPlayingTrack] = useState()
-  
-  {function chooseTrack(track) {
-    setPlayingTrack(track)
-    setSearch("")
-    // setLyrics("")
-  }}
+  const [recommendingTrack, setRecommendingTrack] = useState()
+  const [features , setFeatures] = useState([])
 
-  // useEffect(() => {
-  //   if (!playingTrack) return
+  useEffect(() => {
+    if (!recommendingTrack) return
 
-  //   axios
-  //     .get("http://localhost:3001/lyrics", {
-  //       params: {
-  //         track: playingTrack.title,
-  //         artist: playingTrack.artist,
-  //       },
-  //     })
-  //     .then(res => {
-  //       setLyrics(res.data.lyrics)
-  //     })
-  // }, [playingTrack])
+    axios
+      .post("http://localhost:3001/features", {
+        // params: {
+          // refreshToken:refreshToken ,
+          accessToken:accessToken,
+          id: recommendingTrack.id,
+        // },
+      })
+      .then(res => {
+        setFeatures(res.data.lyrics)
+        console.log(features)
+      })
+  }, [recommendingTrack])
 
   useEffect(() => {
     if (!accessToken) return
@@ -62,6 +59,7 @@ export default function Dashboard({code}) {
             artist: track.artists[0].name,
             title: track.name,
             uri: track.uri,
+            id: track.id,
             albumUrl: smallestAlbumImage.url,
           }
         })
@@ -71,8 +69,27 @@ export default function Dashboard({code}) {
     return () => (cancel = true)
   }, [search, accessToken])
 
+  function chooseTrack(track) {
+    setRecommendingTrack(track)
+    setSearch("")
+    // setLyrics("")
+  }
+  
+  const im = "https://api.thefutzbutler.com/storage/418/Spotify-Highlark-Feature-1280x860.gif"
   return (
-    <Container className="d-flex flex-column py-2" style={{ height: "100vh" }}>
+    
+    <Container className="d-flex flex-column py-3" 
+      style={{ 
+        height: "100vh" ,
+        // width: "150",
+        // marginLeft: "0px",
+        // marginRight: "0px",
+        backgroundImage:`linear-gradient(120deg, #1DB954, #191414)`,
+        // backgroundImage: `url(${im})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
       <Form.Control
         type="search"
         placeholder="Search Songs/Artists"
@@ -84,15 +101,18 @@ export default function Dashboard({code}) {
           <TrackSearchResult
             track={track}
             key={track.uri}
-            // chooseTrack={chooseTrack}/
+            chooseTrack={chooseTrack}
           />
         ))}
         
       </div>
-      {/* <div>
-        <Player accessToken={accessToken} trackUri={playingTrack?.uri} />
-      </div> */}
+      
+      <div>
+        <recommendation accessToken={accessToken} trackUri= 
+        {recommendingTrack?.uri}/>
+      </div>
     </Container>
+    
   )
   return <div>{code}</div>
 }
