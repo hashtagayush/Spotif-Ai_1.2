@@ -19,39 +19,48 @@ export default function Dashboard({code}) {
   const [features , setFeatures] = useState([])
   const [finalList , setFinalList] = useState([])
 
-  useEffect(() => {
-    if (!recommendingTrack) return
 
+  useEffect(() => {
+    if (!recommendingTrack) return;
+
+    // First Axios call
     axios
       .post("http://localhost:3001/features", {
-        // params: {
-          // refreshToken:refreshToken ,
-          accessToken:accessToken,
-          id: recommendingTrack.id,
-        // },
+        accessToken: accessToken,
+        id: recommendingTrack.id,
       })
       .then(res => {
-        setFeatures(res.data.body)
-        // console.log(features)//feature  are getting returned
-        // console.log(typeof features) // is object
+        setFeatures(res.data.body);
       })
+      .catch((err) => {
+        let message =
+          typeof err.response !== "undefined"
+            ? err.response.data.message
+            : err.message;
+        console.warn("error", message);
+      });
+  }, [recommendingTrack]);
 
-    // var jsonString = JSON.stringify(features);
-    // console.log(jsonString);
-    // axios
-    //   .post("http://localhost:3001/recomend" , {
-    //     feat : features,
-    //   }).then(res => {
-    //     console.log(res.data.body)
-    //     setFinalList(res.data.body)
-    //     // console.log(finalList)
-    //   }).catch((err) => {
-    //     let message = typeof err.response !== "undefined" ? err.response.data.message : err.message;
-    //     console.warn("error", message);
-    //   });
-    
-  }, [recommendingTrack])
-// }, [recommendingTrack,accessToken, features, setFeatures, setFinalList])
+  // Use useEffect to handle the side effect of making the second request
+  useEffect(() => {
+    if (features) {
+      // Second Axios call
+      axios
+        .post("http://localhost:3001/recomend", { feat: features })
+        .then(res2 => {
+          console.log(res2.data.body);
+          setFinalList(res2.data.body);
+        })
+        .catch((err) => {
+          let message =
+            typeof err.response !== "undefined"
+              ? err.response.data.message
+              : err.message;
+          console.warn("error", message);
+        });
+    }
+  }, [features]);
+  
 
   useEffect(() => {
     if (!accessToken) return
