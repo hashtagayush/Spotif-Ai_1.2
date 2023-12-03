@@ -2,9 +2,11 @@ import React,{useState, useEffect} from 'react'
 import useAuth  from "./useAuth"
 import axios from "axios"
 import TrackSearchResult from "./TrackSearchResult"
+// import fs;
 import { Container, Form } from "react-bootstrap"
 import SpotifyWApi from "spotify-web-api-node"
 import { recommendation } from './recommendation'
+
 const spotifyApi = new SpotifyWApi({
   clientId: "8b945ef10ea24755b83ac50cede405a0",
 })
@@ -15,6 +17,7 @@ export default function Dashboard({code}) {
   const [searchResults, setSearchResults] = useState([])
   const [recommendingTrack, setRecommendingTrack] = useState()
   const [features , setFeatures] = useState([])
+  const [finalList , setFinalList] = useState([])
 
   useEffect(() => {
     if (!recommendingTrack) return
@@ -28,10 +31,27 @@ export default function Dashboard({code}) {
         // },
       })
       .then(res => {
-        setFeatures(res.data.lyrics)
-        console.log(features)
+        setFeatures(res.data.body)
+        // console.log(features)//feature  are getting returned
+        // console.log(typeof features) // is object
       })
+
+    // var jsonString = JSON.stringify(features);
+    // console.log(jsonString);
+    // axios
+    //   .post("http://localhost:3001/recomend" , {
+    //     feat : features,
+    //   }).then(res => {
+    //     console.log(res.data.body)
+    //     setFinalList(res.data.body)
+    //     // console.log(finalList)
+    //   }).catch((err) => {
+    //     let message = typeof err.response !== "undefined" ? err.response.data.message : err.message;
+    //     console.warn("error", message);
+    //   });
+    
   }, [recommendingTrack])
+// }, [recommendingTrack,accessToken, features, setFeatures, setFinalList])
 
   useEffect(() => {
     if (!accessToken) return
