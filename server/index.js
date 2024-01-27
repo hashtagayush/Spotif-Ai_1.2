@@ -88,46 +88,27 @@ app.post('/features', (req,res) =>{
 
 app.post('/recomend' ,(req,res) =>{
   
-  // console.log("json file received for ML");
+  console.log("json file received for ML");
   // try { 
-  //   const temp =req.body.feat;
-  //   if (!temp) {
-  //     return res.status(400).send('Invalid request: Missing "feat" in the request body');
-  //   }
-  //   const jsonString = JSON.stringify(temp);
-  //   const fileName = 'temp_file.json';
-  //   require('fs').writeFileSync(fileName, jsonString, 'utf8');    
-  //   const jsonArgument = require('fs').readFileSync(fileName, 'utf8');
+    const temp =req.body.feat;
+    if (!temp) {
+      return res.status(400).send('Invalid request: Missing "feat" in the request body');
+    }
+    const jsonString = JSON.stringify(temp);
+    let options = {
+        args: [jsonString],
+      }
+    const scriptPath = 'test.py';
 
-  //   let options = {
-  //     mode: 'text',
-  //     pythonPath: 'python', // Use 'python3' if needed
-  //     pythonOptions: ['-u'], // unbuffered output
-  //     scriptPath: "./test", // Directory where the Python script is located
-  //     args: [jsonArgument],
-  //   };
-  //   const list = ["string1", "string2", "string3"];
+    
+    PythonShell.run(scriptPath, options)
+    .then(result=>{
+      res.json(result)
+      console.log("recomended songs sent")
+    });
 
-  //   PythonShell.run('test.py', options, function (err, results) {
-  //     if (err) {
-  //       console.error(err);
-  //       res.status(500).send('An error occurred');
-  //       return;
-  //     }
-
-  //     // const stringsList = results[0];
-  //     // res.json(stringsList);      // Send the list of strings as the response
-  //     // console.log('Dataframe as JSON:', results);
-  //     res.json(list)
-  //     // console.log(typeof results)
-  //     console.log('Python script finished.');
-  //   });
-  // }catch (err) {
-    //     console.error('Error:', err);
-    //     res.status(420).send('Bad Request');
-    //   }
-    const list = ["string1", "string2", "string3"];
-    res.json(list)
+    // const list = ["string1", "string2", "string3"];
+    // res.json(list)
 })
 
 
@@ -137,6 +118,16 @@ app.post('/recomend' ,(req,res) =>{
 app.listen(PORT, ()=>{console.log(`server started at port ${PORT}`)});
 
 
-// PythonShell.run('test.py', null).then(messages=>{
-//   console.log('finished');
-// });
+
+
+
+
+
+
+// running tring parsing with loaclly stored json file
+    // const fileName = 'temp_file.json';
+    // const jsonArgument = require('fs').readFileSync(fileName, 'utf8');
+    // let options = {
+    //   args: [jsonArgument],
+    // }
+    
