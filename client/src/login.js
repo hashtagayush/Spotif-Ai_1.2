@@ -14,7 +14,7 @@ const img2 = "https://w.forfun.com/fetch/cd/cd3076a50f0c2b99b443f0d8170b47b1.jpe
     <div 
       class="d-flex justify-content-center align-items-center"
       style={{
-        minHeight: '100vh',
+        minHeight: '10vh',
         backgroundImage:`url(${img2})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
